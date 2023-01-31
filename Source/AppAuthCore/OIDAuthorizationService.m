@@ -121,11 +121,15 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (BOOL)resumeExternalUserAgentFlowWithURL:(NSURL *)URL {
-  // rejects URLs that don't match redirect (these may be completely unrelated to the authorization)
-  if (![self shouldHandleURL:URL]) {
-    return NO;
+  // remove port 443 from url
+  NSString *urlString = [URL.absoluteString stringByReplacingOccurrencesOfString:@":443" withString:@""];
+  NSString *webStringURL = [urlString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+
+   // rejects URLs that don't match redirect (these may be completely unrelated to the authorization)
+  if (![self shouldHandleURL:[NSURL URLWithString:webStringURL]]) {
+     return NO;
   }
-  
+
   AppAuthRequestTrace(@"Authorization Response: %@", URL);
   
   // checks for an invalid state
@@ -254,10 +258,15 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (BOOL)resumeExternalUserAgentFlowWithURL:(NSURL *)URL {
-  // rejects URLs that don't match redirect (these may be completely unrelated to the authorization)
-  if (![self shouldHandleURL:URL]) {
-    return NO;
+    // remove port 443 from url
+  NSString *urlString = [URL.absoluteString stringByReplacingOccurrencesOfString:@":443" withString:@""];
+  NSString *webStringURL = [urlString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+
+   // rejects URLs that don't match redirect (these may be completely unrelated to the authorization)
+  if (![self shouldHandleURL:[NSURL URLWithString:webStringURL]]) {
+     return NO;
   }
+   
   // checks for an invalid state
   if (!_pendingEndSessionCallback) {
     [NSException raise:OIDOAuthExceptionInvalidAuthorizationFlow
